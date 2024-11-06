@@ -1,4 +1,4 @@
-create SSH key
+create SSH key (https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 link with repository
 init
 	git config --global user.email "you@example.com"
