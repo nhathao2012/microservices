@@ -2,7 +2,7 @@ create SSH key (https://docs.github.com/en/authentication/connecting-to-github-w
 link with repository
 init
 	git config --global user.email "you@example.com"
- 	git config --global user.name "Your Name"
+ 	git config --global user.name "hophat2004"
 clone via using SSH
 git add .
 git status
