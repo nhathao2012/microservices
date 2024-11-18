@@ -110,7 +110,17 @@ async def update_user(id: str, user: UpdateUserModel = Body(...)):
     user = {
         key: value for key, value in user.model_dump(by_alias=True).items() if value is not None
     }
-    user["password"] = get_password_hash(user["password"])
+
+    # Nếu có mật khẩu mới, hash nó
+    if "password" in user:
+        user["password"] = get_password_hash(user["password"])
+
+    # Kiểm tra email mới đã tồn tại hay chưa
+    if "email" in user:
+        get_email = user["email"]
+        check_email = await user_collection.find_one({"email": get_email})
+        if check_email:
+            raise HTTPException(status_code=403, detail="Email already registered, please choose a different email")
 
     if len(user) >= 1:
         update_result = await user_collection.find_one_and_update(
