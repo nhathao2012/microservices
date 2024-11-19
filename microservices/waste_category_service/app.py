@@ -1,5 +1,5 @@
 import os
-
+from typing import List, Optional
 from fastapi import FastAPI, Body, HTTPException, status
 from fastapi.responses import Response
 
@@ -9,7 +9,6 @@ from pymongo import ReturnDocument
 
 from model import WasteCategoryModel, WasteCategoryCollection, UpdateWasteCategoryModel
 
-
 app = FastAPI(
     title="Category Course API",
     summary="A sample application showing how to use FastAPI to add a ReST API to a MongoDB collection.",
@@ -18,6 +17,7 @@ MONGO_URL = "mongodb+srv://haonngcs220336:microservice@microservicedb.754np.mong
 client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URL)
 db = client["Project"]
 waste_category_collection = db.get_collection("wastecategories")
+waste_item_collection = db.get_collection("wasteitems")
 
 
 @app.post(
@@ -46,19 +46,35 @@ async def list_categories():
     return WasteCategoryCollection(waste_categories=await waste_category_collection.find().to_list(1000))
 
 
+# @app.get(
+#     "/waste_categories/{id}",
+#     response_description="Get a single category",
+#     response_model=WasteCategoryModel,
+#     response_model_by_alias=False,
+# )
+# async def show_category(id: str):
+#     if (
+#         waste_category := await waste_category_collection.find_one({"_id": ObjectId(id)})
+#     ) is not None:
+#         return waste_category
+#
+#     raise HTTPException(status_code=404, detail=f"Waste category {id} not found")
+
+
 @app.get(
     "/waste_categories/{id}",
-    response_description="Get a single category",
+    response_description="Get a single category with items",
     response_model=WasteCategoryModel,
     response_model_by_alias=False,
 )
-async def show_category(id: str):
-    if (
-        waste_category := await waste_category_collection.find_one({"_id": ObjectId(id)})
-    ) is not None:
+async def get_category_with_items(id: str):
+    if waste_category := await waste_category_collection.find_one({"_id": ObjectId(id)}):
+        items = await waste_item_collection.find({"category": waste_category["category"]}).to_list(1000)
+        waste_category["items"] = items
         return waste_category
 
     raise HTTPException(status_code=404, detail=f"Waste category {id} not found")
+
 
 
 @app.put(
@@ -98,3 +114,17 @@ async def delete_category(id: str):
         return Response(status_code=status.HTTP_204_NO_CONTENT)
 
     raise HTTPException(status_code=404, detail=f"Category {id} not found")
+
+# @app.get(
+#     "/waste_categories/{id}/items",
+#     response_description="Get all items of a category",
+#     response_model=List[ItemModel],
+#     response_model_by_alias=False,
+# )
+# async def get_items_of_category(id: str):
+#     if waste_category := await waste_category_collection.find_one({"_id": ObjectId(id)}):
+#         items = await waste_item_collection.find({"category": waste_category["category"]}).to_list(1000)
+#         return items
+#
+#     raise HTTPException(status_code=404, detail=f"Waste category {id} not found")
+

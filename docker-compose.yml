@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   user-service:
-    build: ./microservices/user-service
+    build: microservices/user_service
 
     ports:
       - "8001:8001"
@@ -9,7 +9,7 @@ services:
       - mongodb
 
   waste-item-service:
-    build: ./microservices/waste-item-service
+    build: microservices/waste_item_service
 
     ports:
       - "8002:8002"
@@ -17,7 +17,7 @@ services:
       - mongodb
 
   waste-category-service:
-    build: ./microservices/waste-category-service
+    build: microservices/waste_category_service
 
     ports:
       - "8003:8003"
@@ -25,7 +25,7 @@ services:
       - mongodb
 
   challenge-service:
-    build: ./microservices/challenge-service
+    build: microservices/challenge_service
 
     ports:
       - "8004:8004"

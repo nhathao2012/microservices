@@ -6,45 +6,43 @@ from typing_extensions import Annotated
 
 from bson import ObjectId
 
-# Represents an ObjectId field in the database.
-# It will be represented as a `str` on the model so that it can be serialized to JSON.
 PyObjectId = Annotated[str, BeforeValidator(str)]
 
-class WasteCategoryModel(BaseModel):
+class WasteItemModel(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
+    name: str = Field(...)
     category: str = Field(...)
-    description: str = Field(...)
-    disposal_guidelines: str = Field(...)
+    sorting_instructions: str = Field(...)
     model_config = ConfigDict(
         populate_by_name=True,
         arbitrary_types_allowed=True,
         json_schema_extra={
             "example": {
-                "category": "Food waste",
-                "description": "Food waste",
-                "disposal_guidelines": "How to dispose",
+                "name": "Expired Food",
+                "category": "Food Waste",
+                "sorting_instructions": "dawdawda",
             }
         },
     )
 
 
-class UpdateWasteCategoryModel(BaseModel):
+class UpdateWasteItemModel(BaseModel):
+    name: str = Field(...)
     category: str = Field(...)
-    description: str = Field(...)
-    disposal_guidelines: str = Field(...)
+    sorting_instructions: str = Field(...)
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
         json_encoders={ObjectId: str},
         json_schema_extra={
             "example": {
-                "category": "Food waste",
-                "description": "Food waste",
-                "disposal_guidelines": "How to dispose",
+                "name": "Expired Food",
+                "category": "Food Waste",
+                "sorting_instructions": "dawdadwada",
             }
         },
     )
 
 
-class WasteCategoryCollection(BaseModel):
-    waste_categories: List[WasteCategoryModel]
+class WasteItemCollection(BaseModel):
+    waste_items: List[WasteItemModel]
 
